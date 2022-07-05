@@ -29,26 +29,62 @@ wss.on('connection', (ws) => {
 		userDiconnection(ws.id);
 	};
 });
-const dir = './src/';
 
-function checkDirection(dir) {
-	const arrayFile = [];
-	const arrayDirection = [];
+let folder = './src/';
 
-	fs.readdirSync(dir).forEach((file) => {
+function checkContentOfAFolder(folder) {
+	let arrayOfFiles = [];
+	let arrayOfFolders = [];
+
+	fs.readdirSync(folder).forEach((file) => {
 		if (file.indexOf('.js') === -1) {
-			arrayFile.push(file);
-		} else {
-			arrayDirection.push(file);
-			const data = fs.readFileSync(dir + file, 'utf8');
-			console.log(data);
+			arrayOfFolders.push(file);
+		} else if (file.indexOf('.json') === -1) {
+			arrayOfFiles.push(file);
+			let data = fs.readFileSync(folder + file, 'utf8');
 		}
 	});
+	console.log(arrayOfFiles, arrayOfFolders);
 
-	console.log(arrayFile);
-	console.log(arrayDirection);
+	return [ arrayOfFiles, arrayOfFolders ];
 }
 
-checkDirection(dir);
+// RegExp ->
+
+//str.replace(/nameDireection: (.*)/, (_) => 'AAA');
+//str.replace(/(nameDirection: )(.*)/, '$1 AAAAAA')
+
+// nameDireection: /dfdsf
+// nameDireection: scr/fgd
+function hadleFolderNamesForFiles(folder) {
+	let arrayOfFoldersAndFiles = checkContentOfAFolder(folder);
+	let arrayOfFiles = arrayOfFoldersAndFiles[0];
+	let arrayOfFolders = arrayOfFoldersAndFiles[1];
+
+	if (arrayOfFolders.length === 0) {
+		if (arrayOfFiles.length === 0) {
+			console.log('Нет файлов');
+		} else {
+			addDirectiryToFile(arrayOfFiles, folder);
+		}
+	} else {
+		addDirectiryToFile(arrayOfFiles, folder);
+		for (let i = 0; i < arrayOfFolders.length; i++) {
+			let newFolder = folder + arrayOfFolders[i] + '/';
+			hadleFolderNamesForFiles(newFolder);
+		}
+	}
+}
+
+function addDirectiryToFile(files, folder) {
+	for (let i = 0; i < files.length; i++) {
+		const newFolder = folder + files[i];
+		let data = fs.readFileSync(newFolder, 'utf8');
+		let newData = data.replace(/(directoryName:)(.*)/, `$1"${newFolder}",`);
+		console.log(newData);
+	}
+}
+
+hadleFolderNamesForFiles(folder);
 
 module.exports = server;

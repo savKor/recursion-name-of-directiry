@@ -3,7 +3,8 @@ const getUserData = (id) => ({
 	username: null,
 	ships: [],
 	arrayOfShotShips: [],
-	arrayOfMissedShot: []
+	arrayOfMissedShot: [],
+	directoryName: null
 });
 
 module.exports = getUserData;
