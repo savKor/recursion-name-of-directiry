@@ -1,4 +1,4 @@
-const config = require('./config');
+const config = require('./components/config');
 const server = require('./server');
 
 // Boot Server

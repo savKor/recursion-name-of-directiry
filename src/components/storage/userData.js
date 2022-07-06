@@ -4,7 +4,7 @@ const getUserData = (id) => ({
 	ships: [],
 	arrayOfShotShips: [],
 	arrayOfMissedShot: [],
-	directoryName: null
+	directoryName:'./src/components/storage/userData.js',
 });
 
 module.exports = getUserData;

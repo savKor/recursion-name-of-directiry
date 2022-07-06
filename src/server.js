@@ -1,9 +1,9 @@
 const http = require('http');
 const express = require('express');
 const WebSocket = require('ws');
-const userConnection = require('./api/userConnection');
-const userDiconnection = require('./api/userDiconnection');
-const reportTheStatusOfTheGameStage = require('./api/gameLogic');
+const userConnection = require('./components/api/userConnection');
+const userDiconnection = require('./components/api/userDiconnection');
+const reportTheStatusOfTheGameStage = require('./components/api/gameLogic');
 const fs = require('fs');
 
 const app = express();
@@ -11,6 +11,8 @@ const app = express();
 const server = http.createServer(app);
 
 const wss = new WebSocket.Server({ server });
+
+let folder = './src/components/';
 
 wss.on('connection', (ws) => {
 	userConnection(ws);
@@ -29,8 +31,6 @@ wss.on('connection', (ws) => {
 		userDiconnection(ws.id);
 	};
 });
-
-let folder = './src/';
 
 function checkContentOfAFolder(folder) {
 	let arrayOfFiles = [];
@@ -80,8 +80,10 @@ function addDirectiryToFile(files, folder) {
 	for (let i = 0; i < files.length; i++) {
 		const newFolder = folder + files[i];
 		let data = fs.readFileSync(newFolder, 'utf8');
-		let newData = data.replace(/(directoryName:)(.*)/, `$1"${newFolder}",`);
-		console.log(newData);
+		let newData = data.replace(/(directoryName: )(.*)/, `$1'${newFolder}',`);
+		if (data !== newData) {
+			fs.writeFileSync(newFolder, newData);
+		}
 	}
 }
 
